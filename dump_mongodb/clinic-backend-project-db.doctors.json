@@ -1,0 +1,67 @@
+[{
+  "_id": {
+    "$oid": "68417d37c4dede1a6c42252a"
+  },
+  "name": "Olya",
+  "surname": "Filatova",
+  "email": "test2@gmail.com",
+  "phone": "+380965552211",
+  "clinics": [
+    "Kyiv Nevrology Clinic",
+    "Kyiv General Clinic"
+  ],
+  "services": [
+    "nevrolog",
+    "terapevt"
+  ],
+  "createdAt": {
+    "$date": "2025-06-05T11:19:19.849Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:19:19.849Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68417d7bc4dede1a6c42253e"
+  },
+  "name": "Vasya",
+  "surname": "Krylov",
+  "email": "test1@gmail.com",
+  "phone": "+380969991188",
+  "clinics": [
+    "Kyiv Travmatology Clinic",
+    "Kyiv General Clinic"
+  ],
+  "services": [
+    "travmatolog",
+    "terapevt"
+  ],
+  "createdAt": {
+    "$date": "2025-06-05T11:20:27.140Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:20:27.140Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6841828cecc565bd2954a52c"
+  },
+  "name": "Jenya",
+  "surname": "Filov",
+  "email": "test3@gmail.com",
+  "phone": "+380969778899",
+  "clinics": [
+    "Kyiv General Clinic"
+  ],
+  "services": [
+    "terapevt"
+  ],
+  "createdAt": {
+    "$date": "2025-06-05T11:42:05.004Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:42:05.004Z"
+  }
+}]

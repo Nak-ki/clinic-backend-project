@@ -1,0 +1,99 @@
+[{
+  "_id": {
+    "$oid": "683c4ccdc585aed250354d81"
+  },
+  "name": "Kyiv General Clinic",
+  "services": [
+    "nevrolog",
+    "terapevt",
+    "travmatolog"
+  ],
+  "doctors": [
+    {
+      "name": "Olya Filatova",
+      "_id": {
+        "$oid": "68417d37c4dede1a6c42252a"
+      }
+    },
+    {
+      "name": "Vasya Krylov",
+      "_id": {
+        "$oid": "68417d7bc4dede1a6c42253e"
+      }
+    },
+    {
+      "name": "Jenya Filov",
+      "_id": {
+        "$oid": "6841828cecc565bd2954a52c"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-06-01T12:51:25.269Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:42:05.362Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "683da8538a8cf92c02a58034"
+  },
+  "name": "Kyiv Dermatology Clinic",
+  "services": [],
+  "doctors": [],
+  "createdAt": {
+    "$date": "2025-06-02T13:34:11.845Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-02T13:34:11.845Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "683da8678a8cf92c02a58038"
+  },
+  "name": "Kyiv Travmatology Clinic",
+  "services": [
+    "travmatolog",
+    "terapevt"
+  ],
+  "doctors": [
+    {
+      "name": "Vasya Krylov",
+      "_id": {
+        "$oid": "68417d7bc4dede1a6c42253e"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-06-02T13:34:31.376Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:20:27.494Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "683da8978a8cf92c02a5803c"
+  },
+  "name": "Kyiv Nevrology Clinic",
+  "services": [
+    "nevrolog",
+    "terapevt"
+  ],
+  "doctors": [
+    {
+      "name": "Olya Filatova",
+      "_id": {
+        "$oid": "68417d37c4dede1a6c42252a"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-06-02T13:35:19.567Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T11:19:20.182Z"
+  }
+}]

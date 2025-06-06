@@ -1,0 +1,32 @@
+[{
+  "_id": {
+    "$oid": "6839ac243d4de32e3929fd35"
+  },
+  "email": "anpav00@gmail.com",
+  "password": "$2b$10$s2cZP0ETPWdpqLx7YILWAek6v/OJnxfQK2G0cTm4Gq2Q2yLOLm4Y.",
+  "role": "admin",
+  "name": "Anna",
+  "surname": "Pavlova",
+  "createdAt": {
+    "$date": "2025-05-30T13:01:24.731Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-30T13:01:24.731Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "683aecdfaaf6081fbf0c7176"
+  },
+  "email": "nakkibond@gmail.com",
+  "password": "$2b$10$.FhnH4yMuRlziZ/DWjsZxemBvh12Fw2g7HzWZNiC2/g3/iDWO2EvO",
+  "role": "admin",
+  "name": "Anastasia",
+  "surname": "Grol",
+  "createdAt": {
+    "$date": "2025-05-31T11:49:51.152Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-31T11:59:06.777Z"
+  }
+}]
