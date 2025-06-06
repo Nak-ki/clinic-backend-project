@@ -2,9 +2,10 @@ import jwt from "jsonwebtoken";
 
 import { config } from "../configs/configs";
 import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
+// import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { StatusCodesEnum } from "../enums/status-codes.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
-import { ApiError } from "../errors/api.errors";
+import { ApiError } from "../errors/api.error";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
 import { tokenRepository } from "../repositories/token.repository";
 
@@ -48,6 +49,31 @@ class TokenService {
         }
     }
 
+    public verifyActionToken(
+        token: string,
+        type: ActionTokenTypeEnum,
+    ): ITokenPayload {
+        try {
+            let secret: string;
+
+            switch (type) {
+                case ActionTokenTypeEnum.RECOVERY_PASSWORD:
+                    secret = config.ACTION_RECOVERY_PASSWORD_SECRET;
+                    break;
+                default:
+                    throw new ApiError(
+                        "Invalid token type",
+                        StatusCodesEnum.BED_REQUEST,
+                    );
+            }
+            return jwt.verify(token, secret) as ITokenPayload;
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+            throw new ApiError("Invalid token", StatusCodesEnum.UNAUTHORIZED);
+        }
+    }
+
     public async isTokenExists(
         token: string,
         type: TokenTypeEnum,
@@ -63,40 +89,19 @@ class TokenService {
         type: ActionTokenTypeEnum,
     ): string {
         let secret: string;
-        // let expiresIn: string;
+        let expiresIn: any;
 
         switch (type) {
-            case ActionTokenTypeEnum.ACTIVATE_ACCOUNT:
-                secret = config.ACTION_ACTIVATE_SECRET;
-                // expiresIn = config.ACTION_ACTIVATE_LIFETIME;
+            case ActionTokenTypeEnum.RECOVERY_PASSWORD:
+                secret = config.ACTION_RECOVERY_PASSWORD_SECRET;
+                expiresIn = config.ACTION_RECOVERY_PASSWORD_LIFETIME;
                 break;
             default:
                 throw new ApiError("Invalid token type", 400);
         }
         return jwt.sign(payload, secret, {
-            expiresIn: "30m",
+            expiresIn,
         });
-    }
-    public checkActionToken(
-        token: string,
-        type: ActionTokenTypeEnum,
-    ): ITokenPayload {
-        try {
-            let secret: string;
-
-            switch (type) {
-                case ActionTokenTypeEnum.ACTIVATE_ACCOUNT:
-                    secret = config.ACTION_ACTIVATE_SECRET;
-                    break;
-
-                default:
-                    throw new ApiError("Invalid token type", 500);
-            }
-            return jwt.verify(token, secret) as ITokenPayload;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (e) {
-            throw new ApiError("Invalid token", 401);
-        }
     }
 }
 

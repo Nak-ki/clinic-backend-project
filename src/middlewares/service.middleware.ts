@@ -1,21 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ICreateDoctorDTO } from "../interfaces/doctor.interface";
-import { clinicService } from "../services/clinic.service";
+import { serviceService } from "../services/service.service";
 
-class ClinicMiddleware {
-    public async isClinicExist(
+class ServiceMiddleware {
+    public async isServiceExist(
         req: Request,
         res: Response,
         next: NextFunction,
     ) {
         try {
             const dto = req.body as ICreateDoctorDTO;
-            const clinicsArray = dto.clinics.split(", ");
 
-            clinicsArray.map(
-                async (clinic) => await clinicService.checkClinicByName(clinic),
-            );
+            const serviceArray = dto.services.split(", ");
+
+            for (const service of serviceArray) {
+                await serviceService.getServiceByName(service);
+            }
 
             next();
         } catch (e) {
@@ -24,4 +25,4 @@ class ClinicMiddleware {
     }
 }
 
-export const clinicMiddleware = new ClinicMiddleware();
+export const serviceMiddleware = new ServiceMiddleware();

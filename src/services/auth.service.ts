@@ -1,10 +1,18 @@
+import { config } from "../configs/configs";
 import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { EmailTypeEnum } from "../enums/email-type.enum";
+import { RoleEnum } from "../enums/role.enum";
 import { StatusCodesEnum } from "../enums/status-codes.enum";
-import { ApiError } from "../errors/api.errors";
+import { ApiError } from "../errors/api.error";
 import { IAuth } from "../interfaces/auth.interface";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
-import { IUser, IUserCreateDTO } from "../interfaces/user.interface";
+import {
+    IResetPasswordSend,
+    IResetPasswordSet,
+    IUser,
+    IUserCreateDTO,
+} from "../interfaces/user.interface";
+import { userPresenter } from "../presenters/user.presenter";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -16,37 +24,26 @@ import { userService } from "./user.service";
 class AuthService {
     public async signUp(
         user: IUserCreateDTO,
-    ): Promise<{ user: IUser; tokens: ITokenPair }> {
+    ): Promise<{ user: Partial<IUser>; tokens: ITokenPair }> {
         await userService.isEmailUnique(user.email);
         const password = await passwordService.hashPassword(user.password);
-        const newUser = await userRepository.create({ ...user, password });
+        const admin = await userRepository.create({
+            ...user,
+            password,
+            role: RoleEnum.ADMIN,
+        });
         const tokens = tokenService.generateTokens({
-            userId: newUser._id,
-            role: newUser.role,
+            userId: admin._id,
+            role: admin.role,
         });
-        await tokenRepository.create({ ...tokens, _userId: newUser._id });
-        const token = tokenService.generateActionToken(
-            { userId: newUser._id, role: newUser.role },
-            ActionTokenTypeEnum.ACTIVATE_ACCOUNT,
-        );
-
-        await actionTokenRepository.create({
-            type: ActionTokenTypeEnum.ACTIVATE_ACCOUNT,
-            _userId: newUser._id,
-            token,
-        });
-        await emailService.sendMail(EmailTypeEnum.WELCOME, user.email, {
-            name: user.name,
-            actionToken: token,
-            frontURL: "http://localhost:7000",
-        });
-        return { user: newUser, tokens };
+        await tokenRepository.create({ ...tokens, _userId: admin._id });
+        return { user: userPresenter.publicResDTO(admin), tokens };
     }
 
     public async signIn(
         dto: IAuth,
         user: IUser,
-    ): Promise<{ user: IUser; tokens: ITokenPair }> {
+    ): Promise<{ user: Partial<IUser>; tokens: ITokenPair }> {
         const isValidPassword = await passwordService.comparePassword(
             dto.password,
             user.password,
@@ -63,24 +60,55 @@ class AuthService {
             userId: user._id,
             role: user.role,
         });
+
+        await tokenRepository.deleteOldTokens({ _userId: user._id });
+
         await tokenRepository.create({ ...tokens, _userId: user._id });
-        return { user, tokens };
+        return { user: userPresenter.publicResDTO(user), tokens };
     }
 
-    public async activateAccount(jwtPayload: ITokenPayload): Promise<void> {
-        const user = await userRepository.getById(jwtPayload.userId);
-
+    public async recoveryPasswordSendEmail(
+        dto: IResetPasswordSend,
+    ): Promise<void> {
+        const user = await userRepository.getByEmail(dto.email);
         if (!user) {
             throw new ApiError("User not found", 404);
         }
 
-        await actionTokenRepository.deleteManyByParams({
+        const token = tokenService.generateActionToken(
+            { userId: user._id, role: user.role },
+            ActionTokenTypeEnum.RECOVERY_PASSWORD,
+        );
+        await actionTokenRepository.create({
+            type: ActionTokenTypeEnum.RECOVERY_PASSWORD,
             _userId: user._id,
-            type: ActionTokenTypeEnum.ACTIVATE_ACCOUNT,
+            token,
         });
 
-        await userRepository.updateAccountStatus(jwtPayload.userId, {
-            isActive: true,
+        await emailService.sendMail(
+            EmailTypeEnum.RECOVERY_PASSWORD,
+            user.email,
+            {
+                name: user.name,
+                actionToken: token,
+                frontURL: config.FRONT_URL,
+            },
+        );
+    }
+
+    public async recoveryPasswordSet(
+        dto: IResetPasswordSet,
+        jwtPayload: ITokenPayload,
+    ): Promise<void> {
+        const password = await passwordService.hashPassword(dto.password);
+        await userRepository.updateById(jwtPayload.userId, { password });
+
+        await actionTokenRepository.deleteManyByParams({
+            _userId: jwtPayload.userId,
+            type: ActionTokenTypeEnum.RECOVERY_PASSWORD,
+        });
+        await tokenRepository.deleteManyByParams({
+            _userId: jwtPayload.userId,
         });
     }
 }

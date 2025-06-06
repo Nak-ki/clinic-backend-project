@@ -3,7 +3,7 @@ import { ObjectSchema } from "joi";
 import { isObjectIdOrHexString } from "mongoose";
 
 import { StatusCodesEnum } from "../enums/status-codes.enum";
-import { ApiError } from "../errors/api.errors";
+import { ApiError } from "../errors/api.error";
 
 class CommonMiddleware {
     public isIdValidate(key: string) {
@@ -12,7 +12,10 @@ class CommonMiddleware {
                 const id = req.params[key];
 
                 if (!isObjectIdOrHexString(id)) {
-                    throw new ApiError(`${key}: ${id} invalid Id`, 400);
+                    throw new ApiError(
+                        `${key}: ${id} invalid Id`,
+                        StatusCodesEnum.BED_REQUEST,
+                    );
                 }
                 next();
             } catch (e) {
@@ -32,23 +35,7 @@ class CommonMiddleware {
         };
     }
 
-    public isFileExist() {
-        return async (req: Request, res: Response, next: NextFunction) => {
-            try {
-                if (!req.file) {
-                    throw new ApiError(
-                        "No file upload",
-                        StatusCodesEnum.BED_REQUEST,
-                    );
-                }
-                next();
-            } catch (e) {
-                next(e);
-            }
-        };
-    }
-
-    public query(validator: ObjectSchema) {
+    public isQueryValid(validator: ObjectSchema) {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 req.query = await validator.validateAsync(req.query);
